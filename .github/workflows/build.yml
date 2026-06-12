@@ -1,4 +1,4 @@
-name: Build Noctra Android APK
+name: Build Noctra Android
 
 on:
   push:
@@ -23,7 +23,6 @@ jobs:
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           yes | $SDKMANAGER --licenses > /dev/null 2>&1 || true
           $SDKMANAGER "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
 
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
@@ -33,17 +32,42 @@ jobs:
         with:
           gradle-version: '8.6'
 
+      # --- Debug APK (always built, no secrets needed) ---
       - name: Build debug APK
         run: gradle assembleDebug
 
-      - name: Upload APK
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: Noctra-Android-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Show result
+      # --- Release AAB (only when signing secrets are set) ---
+      - name: Decode keystore
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > noctra.keystore
+
+      - name: Build release AAB
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "✓ APK built successfully"
-          ls -lh app/build/outputs/apk/debug/app-debug.apk
+          gradle bundleRelease \
+            -Pandroid.injected.signing.store.file=$PWD/noctra.keystore \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+
+      - name: Upload release AAB
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Noctra-Android-release
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 90

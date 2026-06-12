@@ -1,0 +1,28 @@
+name: Generate Keystore (run once)
+on: workflow_dispatch
+jobs:
+  keygen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Generate keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore noctra.keystore \
+            -alias noctra \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -storepass noctra2024! \
+            -keypass noctra2024! \
+            -dname "CN=Noctra Browser, OU=Promptowy, O=Promptowy, L=Warsaw, ST=Masovian, C=PL"
+          echo "KEYSTORE_BASE64=$(base64 -w0 noctra.keystore)" >> $GITHUB_OUTPUT
+          cat noctra.keystore | base64 -w0
+      - name: Show base64 keystore
+        run: cat noctra.keystore | base64 -w 0 > keystore.b64 && cat keystore.b64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keystore-base64
+          path: keystore.b64
