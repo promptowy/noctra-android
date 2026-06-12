@@ -1,0 +1,2 @@
+-keep class com.promptowy.noctra.** { *; }
+-keepattributes *Annotation*

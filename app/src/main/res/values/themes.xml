@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Noctra" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryVariant">@color/bg2</item>
+        <item name="colorOnPrimary">@color/bg</item>
+        <item name="colorSurface">@color/bg2</item>
+        <item name="colorOnSurface">@color/fg</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Noctra.BottomSheet</item>
+    </style>
+
+    <style name="Theme.Noctra.BottomSheet" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Widget.Noctra.BottomSheet</item>
+    </style>
+
+    <style name="Widget.Noctra.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="backgroundTint">@color/bg2</item>
+        <item name="android:elevation">16dp</item>
+    </style>
+</resources>

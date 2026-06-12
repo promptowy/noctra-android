@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Noctra</string>
+    <string name="hint_url">search or enter address</string>
+    <string name="new_tab">new tab</string>
+    <string name="shield_off">shield off</string>
+    <string name="shield_on">shield on</string>
+    <string name="bookmarks">bookmarks</string>
+    <string name="profiles">profiles</string>
+    <string name="settings">settings</string>
+    <string name="no_bookmarks">no bookmarks yet — tap ★ on any page</string>
+    <string name="default_profile">Default</string>
+</resources>
